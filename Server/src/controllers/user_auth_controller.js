@@ -68,7 +68,7 @@ exports.updateUser = async (req, res) => {
   const userId = req.params.id;
   const { userName, userEmail, userPassword } = req.body;
 
-  const userExist = await prisma.user.findUnique({
+  const userExist = await prisma.users.findUnique({
     where: {
       id: Number(userId),
     },

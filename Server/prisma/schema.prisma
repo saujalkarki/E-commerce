@@ -13,10 +13,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-enum Role{
-Admin 
-User
+enum Role {
+  Admin
+  User
 }
 
 model Users {
@@ -28,5 +27,15 @@ model Users {
   userContactNumber String @unique
   userImage String?
   role Role @default(User)
+  createdAt DateTime @default(now())
+}
+
+model Vendors {
+  id String @id @default(uuid())
+  vendorName String
+  vendorEmail String @unique
+  vendorPassword String
+  vendorContactNumber String @unique
+  vendorDocumentImage String
   createdAt DateTime @default(now())
 }
