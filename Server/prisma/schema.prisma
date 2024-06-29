@@ -37,5 +37,7 @@ model Vendors {
   vendorPassword String
   vendorContactNumber String @unique
   vendorDocumentImage String
+  vendorOtp Int?
+  vendorOtpVerified Boolean @default(false)
   createdAt DateTime @default(now())
 }
