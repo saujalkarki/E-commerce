@@ -27,8 +27,10 @@ model Users {
   userContactNumber String @unique
   userImage String?
   role Role @default(User)
+  userOTP String?
+  userOTPVerified  Boolean @default(false)
   createdAt DateTime @default(now())
-}
+} 
 
 model Vendors {
   id String @id @default(uuid())
@@ -37,5 +39,7 @@ model Vendors {
   vendorPassword String
   vendorContactNumber String @unique
   vendorDocumentImage String
+  vendorOTP String?
+  vendorOTPVerified  Boolean @default(false)
   createdAt DateTime @default(now())
 }
