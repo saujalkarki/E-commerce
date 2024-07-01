@@ -6,6 +6,9 @@ const {
   getSingleVendor,
   updateVendor,
   deleteVendor,
+  forgotUpdateOrResetPassword,
+  verifyOtp,
+  changePassword,
 } = require("../../controllers/vendor/vendor_controller");
 
 const { asyncErrorHandler } = require("../../middlewares/async_error_handler");
@@ -18,5 +21,9 @@ router
   .get(asyncErrorHandler(getSingleVendor))
   .patch(asyncErrorHandler(updateVendor))
   .delete(asyncErrorHandler(deleteVendor));
+
+router.route("/reset").post(asyncErrorHandler(forgotUpdateOrResetPassword));
+router.route("/verifyotp").post(asyncErrorHandler(verifyOtp));
+router.route("/changepassword").post(asyncErrorHandler(changePassword));
 
 module.exports = router;

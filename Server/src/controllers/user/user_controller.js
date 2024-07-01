@@ -269,3 +269,180 @@ exports.deleteUser = async (req, res) => {
     data: null,
   });
 };
+
+// forgotPassword-reset-update---sending otp
+exports.forgotUpdateOrResetPassword = async (req, res) => {
+  const userId = req.params.id;
+  const { userEmail } = req.body;
+
+  if (!userEmail) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Please enter your Email address.",
+      data: null,
+    });
+  }
+
+  const userExist = await prisma.users.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!userExist) {
+    return res.status(400).json({
+      status: "Error",
+      message: "User with this Id doesn't exist.",
+      data: null,
+    });
+  }
+
+  const otp = otpGenerator.generate(6, {
+    lowerCaseAlphabets: false,
+    upperCaseAlphabets: false,
+    specialChars: false,
+  });
+
+  sendEmail({
+    email: userExist.userEmail,
+    subject: `OTP for E-com reset password.`,
+    message: `Please don't share this OTP with anyone.
+    OTP:${otp}
+    This OTP will expires in 10 mins.`,
+  });
+
+  await prisma.users.update({
+    where: {
+      userEmail,
+    },
+    data: {
+      userOTP: otp,
+    },
+  });
+
+  res.status(200).json({
+    status: "Success",
+    message: "OTP sent successfully.",
+    data: userExist,
+  });
+};
+
+// verify otp
+exports.verifyOtp = async (req, res) => {
+  const { userEmail, userOTP } = req.body;
+
+  if (!userEmail || !userOTP) {
+    return res.status(400).json({
+      status: " Error",
+      message: "Please enter the OTP from your Email.",
+      data: null,
+    });
+  }
+
+  const userExist = await prisma.users.findUnique({
+    where: {
+      userEmail,
+    },
+  });
+
+  if (!userExist) {
+    return res.status(400).json({
+      where: {
+        status: "Error",
+        message: "User with this id doesn't exist.",
+      },
+    });
+  }
+
+  const isOtpMatched = userExist.userOTP === userOTP;
+
+  if (!isOtpMatched) {
+    return res.status(400).json({
+      status: "Error",
+      message: "OTP doesn't matched, please check Email and try Again",
+      data: null,
+    });
+  }
+
+  await prisma.users.update({
+    where: {
+      userEmail,
+    },
+    data: {
+      userOTP: null,
+      userOTPVerified: true,
+    },
+  });
+
+  res.status(200).json({
+    status: "Success",
+    message: "OTP verified successfully, you can change your password now.",
+    data: userExist,
+  });
+};
+
+// changing password
+exports.changePassword = async (req, res) => {
+  const { userEmail, newPassword, confirmNewPassowrd } = req.body;
+
+  if (!userEmail || !newPassword || !confirmNewPassowrd) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Please enter new password.",
+      data: null,
+    });
+  }
+
+  const userExist = await prisma.users.findUnique({
+    where: {
+      userEmail,
+    },
+  });
+
+  if (!userExist) {
+    return res.status(400).json({
+      status: "Error",
+      message: "User with this Email doesn't exist",
+    });
+  }
+
+  if (newPassword !== confirmNewPassowrd) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Please enter the same password at both input field.",
+      data: null,
+    });
+  }
+
+  if (bcrypt.compareSync(newPassword, userExist.userPassword)) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Please enter an unique password.",
+      data: null,
+    });
+  }
+
+  if (!userExist.userOTPVerified) {
+    return res.status(400).json({
+      status: "Error",
+      message: "OTP hasn't verified yet, please verify it.",
+      data: null,
+    });
+  }
+
+  await prisma.users.update({
+    where: {
+      userEmail,
+    },
+    data: {
+      userPassword: bcrypt.hashSync(newPassword, 10),
+      userOTPVerified: false,
+    },
+  });
+
+  res.status(200).json({
+    status: "Success",
+    message: "Password changed successfully.",
+    data: userExist,
+  });
+};

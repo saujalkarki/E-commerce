@@ -256,3 +256,180 @@ exports.deleteVendor = async (req, res) => {
     data: null,
   });
 };
+
+// forgotPassword-reset-update---sending otp
+exports.forgotUpdateOrResetPassword = async (req, res) => {
+  const vendorId = req.params.id;
+  const { vendorEmail } = req.body;
+
+  if (!vendorEmail) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Please enter your Email address.",
+      data: null,
+    });
+  }
+
+  const vendorExist = await prisma.vendors.findUnique({
+    where: {
+      id: vendorId,
+    },
+  });
+
+  if (!vendorExist) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Vendor with this Id doesn't exist.",
+      data: null,
+    });
+  }
+
+  const otp = otpGenerator.generate(6, {
+    lowerCaseAlphabets: false,
+    upperCaseAlphabets: false,
+    specialChars: false,
+  });
+
+  sendEmail({
+    email: vendorExist.vendorEmail,
+    subject: `OTP for E-com reset password.`,
+    message: `Please don't share this OTP with anyone.
+    OTP:${otp}
+    This OTP will expires in 10 mins.`,
+  });
+
+  await prisma.vendors.update({
+    where: {
+      vendorEmail,
+    },
+    data: {
+      vendorOTP: otp,
+    },
+  });
+
+  res.status(200).json({
+    status: "Success",
+    message: "OTP sent successfully.",
+    data: vendorExist,
+  });
+};
+
+// verify otp
+exports.verifyOtp = async (req, res) => {
+  const { vendorEmail, vendorOTP } = req.body;
+
+  if (!vendorEmail || !vendorOTP) {
+    return res.status(400).json({
+      status: " Error",
+      message: "Please enter the OTP from your Email.",
+      data: null,
+    });
+  }
+
+  const vendorExist = await prisma.vendors.findUnique({
+    where: {
+      vendorEmail,
+    },
+  });
+
+  if (!vendorExist) {
+    return res.status(400).json({
+      where: {
+        status: "Error",
+        message: "Vendor with this id doesn't exist.",
+      },
+    });
+  }
+
+  const isOtpMatched = vendorExist.vendorOTP === vendorOTP;
+
+  if (!isOtpMatched) {
+    return res.status(400).json({
+      status: "Error",
+      message: "OTP doesn't matched, please check Email and try Again",
+      data: null,
+    });
+  }
+
+  await prisma.vendors.findUnique({
+    where: {
+      vendorEmail,
+    },
+    data: {
+      vendorOTP: null,
+      vendorOTPVerified: true,
+    },
+  });
+
+  res.status(200).json({
+    status: "Success",
+    message: "OTP verified successfully, you can change your password now.",
+    data: vendorExist,
+  });
+};
+
+// changing password
+exports.changePassword = async (req, res) => {
+  const { vendorEmail, newPassword, confirmNewPassowrd } = req.body;
+
+  if (!vendorEmail || !newPassword || !confirmNewPassowrd) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Please enter new password.",
+      data: null,
+    });
+  }
+
+  const vendorExist = await prisma.vendors.findUnique({
+    where: {
+      vendorEmail,
+    },
+  });
+
+  if (!vendorExist) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Vendor with this Email doesn't exist",
+    });
+  }
+
+  if (newPassword !== confirmNewPassowrd) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Please enter the same password at both input field.",
+      data: null,
+    });
+  }
+
+  if (bcrypt.compareSync(newPassword, vendorExist.vendorPassword)) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Please enter an unique password.",
+      data: null,
+    });
+  }
+
+  if (!vendorExist.vendorOTPVerified) {
+    return res.status(400).json({
+      status: "Error",
+      message: "OTP hasn't verified yet, please verify it.",
+      data: null,
+    });
+  }
+
+  await prisma.vendors.update({
+    where: {
+      vendorEmail,
+    },
+    data: {
+      vendorPassword: bcrypt.hashSync(newPassword, 10),
+      vendorOTPVerified: false,
+    },
+  });
+
+  res.status(200).json({
+    status: "Success",
+    message: "Password changed successfully.",
+    data: vendorExist,
+  });
+};
