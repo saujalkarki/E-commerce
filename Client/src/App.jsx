@@ -1,7 +1,9 @@
+import { Home } from "./pages/index";
+
 function App() {
   return (
     <>
-      <div>E-commerce</div>
+      <Home />
     </>
   );
 }
