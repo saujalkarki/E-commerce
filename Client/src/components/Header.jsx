@@ -19,6 +19,8 @@ export function Header() {
           <select
             lang="en"
             className=" rounded-md font-semibold focus:outline-none p-1 lg:px-2"
+            name="lang"
+            id="lang"
           >
             <option value="Eng">English</option>
             <option value="Nep">नेपाली</option>
@@ -26,6 +28,8 @@ export function Header() {
           <select
             lang="en"
             className=" rounded-md font-semibold focus:outline-none p-1 lg:px-2"
+            name="cur"
+            id="cur"
           >
             <option value="USD">USD</option>
             <option value="NPR">NPR</option>
