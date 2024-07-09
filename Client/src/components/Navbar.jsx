@@ -8,7 +8,7 @@ import noBackgroundLogo from "../assets/img/noBackgroundLogo.png";
 export function Navbar() {
   return (
     <>
-      <div className=" flex items-center justify-around bg-[#2988bb] py-[0.40rem] sm:py-[0.55rem] md:py-[0.65rem]">
+      <nav className=" flex items-center justify-around bg-[#2988bb] py-[0.40rem] sm:py-[0.55rem] md:py-[0.65rem]">
         <div>
           <img
             src={noBackgroundLogo}
@@ -35,7 +35,7 @@ export function Navbar() {
           <FaRegHeart size={"1.2em"} />
           <CgProfile size={"1.2em"} />
         </div>
-      </div>
+      </nav>
     </>
   );
 }

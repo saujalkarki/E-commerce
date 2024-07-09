@@ -4,7 +4,7 @@ import noBackgroundLogo from "../assets/img/noBackgroundLogo.png";
 export function Header() {
   return (
     <>
-      <div className=" bg-[#2988bb] py-4 px-2 flex items-center justify-around border-b-2 border-neutral-950">
+      <header className=" bg-[#2988bb] py-4 px-2 flex items-center justify-around border-b-2 border-neutral-950">
         <img src={noBackgroundLogo} alt="logo" className=" h-10 sm:hidden" />
         <div className="hidden items-center gap-2 sm:flex font-medium md:">
           <FaLocationDot />
@@ -35,7 +35,7 @@ export function Header() {
             <option value="NPR">NPR</option>
           </select>
         </div>
-      </div>
+      </header>
     </>
   );
 }
