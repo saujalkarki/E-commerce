@@ -7,3 +7,4 @@ export * from "./auth/AuthButton";
 export * from "./auth/OtpForm";
 export * from "./auth/ForgotPasswordForm";
 export * from "./auth/ResetPasswordForm";
+export * from "./auth/ShowPassword";

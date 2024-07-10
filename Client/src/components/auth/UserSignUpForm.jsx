@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AuthButton, AuthInputField } from "../index";
+import { AuthButton, AuthInputField, ShowPassword } from "../index";
 
 export function UserSignUpForm() {
   const [isSignUpPage, setIsSignUpPage] = useState(true);
@@ -60,11 +60,7 @@ export function UserSignUpForm() {
                 </label>
                 <input type="file" name="userImage" id="userImage" />
               </div>
-              <AuthInputField
-                commonAttributes="userPassword"
-                renderName="Password"
-                type="text"
-              />
+              <ShowPassword label="Password" commonAttributes="userPassword" />
               <AuthButton AuthType={isSignUpPage} />
             </form>
           ) : (
@@ -74,11 +70,7 @@ export function UserSignUpForm() {
                 renderName="Email"
                 type="email"
               />
-              <AuthInputField
-                commonAttributes="userPassword"
-                renderName="Password"
-                type="text"
-              />
+              <ShowPassword label="Password" commonAttributes="userPassword" />
               <AuthButton AuthType={isSignUpPage} />
             </form>
           )}

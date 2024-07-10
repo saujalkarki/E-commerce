@@ -9,7 +9,7 @@ export function AuthInputField({ commonAttributes, renderName, type }) {
           type={type}
           name={commonAttributes}
           id={commonAttributes}
-          className=" border-slate-950 border-[1px] rounded-sm px-[0.30rem] py-[0.20rem]"
+          className=" border-slate-950 border-[2px] rounded-sm px-[0.30rem] py-[0.20rem]"
         />
       </div>
     </>

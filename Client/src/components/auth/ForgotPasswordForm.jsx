@@ -10,13 +10,13 @@ export function ForgotPasswordForm() {
           </div>
           <form className="flex flex-col p-3">
             <div className="flex flex-col gap-1">
-              <label htmlFor="userOtp" className=" font-medium">
+              <label htmlFor="userEmail" className=" font-medium">
                 Email
               </label>
               <input
                 type="email"
-                name="userOtp"
-                id="userOtp"
+                name="userEmail"
+                id="userEmail"
                 className="border-slate-950 border-[2px] rounded-sm font-semibold p-1"
               />
             </div>
