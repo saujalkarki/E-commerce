@@ -5,6 +5,7 @@ import {
   OtpVerify,
   ForgotPassword,
   ResetPassword,
+  FourOFour,
 } from "./pages/index";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="/user/forgot/email" element={<ForgotPassword />} />
           <Route path="/user/forgot/otp" element={<OtpVerify />} />
           <Route path="/user/forgot/reset" element={<ResetPassword />} />
+          <Route path="/error/404" element={<FourOFour />} />
         </Routes>
       </BrowserRouter>
     </>

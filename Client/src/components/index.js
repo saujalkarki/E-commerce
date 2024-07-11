@@ -8,3 +8,4 @@ export * from "./auth/OtpForm";
 export * from "./auth/ForgotPasswordForm";
 export * from "./auth/ResetPasswordForm";
 export * from "./auth/ShowPassword";
+export * from "./error/Four04Err";
